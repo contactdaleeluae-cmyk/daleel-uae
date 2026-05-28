@@ -49,7 +49,7 @@ Air Quality Testing',
 (
   'Gulf Air Conditioning LLC',
   'gulf-air-conditioning-llc',
-  'Gulf Air Conditioning is Sharjah\'s most trusted AC company. We provide comprehensive air conditioning solutions for homes, offices and industrial spaces. Our team of expert technicians is available 7 days a week including public holidays.',
+  'Gulf Air Conditioning is Sharjah''s most trusted AC company. We provide comprehensive air conditioning solutions for homes, offices and industrial spaces. Our team of expert technicians is available 7 days a week including public holidays.',
   'Sharjah',
   'Al Nahda',
   'AC Repair',
@@ -71,7 +71,7 @@ Annual Service Contracts',
 (
   'Sparkle Home Cleaning Dubai',
   'sparkle-home-cleaning-dubai',
-  'Sparkle is Dubai\'s top-rated home cleaning service. We use eco-friendly products and trained professional staff to deliver spotless results every time. Whether you need a one-time deep clean or regular weekly service, we have flexible packages to suit every home.',
+  'Sparkle is Dubai''s top-rated home cleaning service. We use eco-friendly products and trained professional staff to deliver spotless results every time. Whether you need a one-time deep clean or regular weekly service, we have flexible packages to suit every home.',
   'Dubai',
   'Jumeirah',
   'Cleaning Services',
@@ -111,7 +111,7 @@ Regular Maid Service',
 (
   'Pro Clean RAK',
   'pro-clean-rak',
-  'Pro Clean is Ras Al Khaimah\'s premier cleaning company. We serve residential and commercial clients with a team of experienced, background-checked cleaners. Our satisfaction guarantee means we come back free of charge if you are not completely happy.',
+  'Pro Clean is Ras Al Khaimah''s premier cleaning company. We serve residential and commercial clients with a team of experienced, background-checked cleaners. Our satisfaction guarantee means we come back free of charge if you are not completely happy.',
   'Ras Al Khaimah',
   'Al Nakheel',
   'Cleaning Services',
@@ -173,7 +173,7 @@ Body Scrubs',
 (
   'Glow Beauty Center Sharjah',
   'glow-beauty-center-sharjah',
-  'Glow Beauty Center is Sharjah\'s favourite destination for all beauty needs. Our skilled team of beauticians and hair stylists deliver exceptional results at great value prices. We cater to both ladies and children in a clean, welcoming environment.',
+  'Glow Beauty Center is Sharjah''s favourite destination for all beauty needs. Our skilled team of beauticians and hair stylists deliver exceptional results at great value prices. We cater to both ladies and children in a clean, welcoming environment.',
   'Sharjah',
   'Al Taawun',
   'Salon and Beauty',
@@ -195,7 +195,7 @@ Kids Haircut',
 (
   'Al Madina Plumbing Services',
   'al-madina-plumbing-services',
-  'Al Madina Plumbing is Dubai\'s most reliable plumbing service. Available 24 hours a day, 7 days a week, we fix leaks, blockages, and all plumbing emergencies fast. Our licensed plumbers carry full insurance and guarantee their work for 90 days.',
+  'Al Madina Plumbing is Dubai''s most reliable plumbing service. Available 24 hours a day, 7 days a week, we fix leaks, blockages, and all plumbing emergencies fast. Our licensed plumbers carry full insurance and guarantee their work for 90 days.',
   'Dubai',
   'Bur Dubai',
   'Plumbing',
@@ -215,7 +215,7 @@ Water Tank Cleaning',
 (
   'Quick Fix Plumbing Fujairah',
   'quick-fix-plumbing-fujairah',
-  'Quick Fix is Fujairah\'s go-to plumbing service for homes and businesses. We respond within 60 minutes to all emergency calls. Our experienced team handles everything from simple tap repairs to full bathroom renovations at honest, upfront prices.',
+  'Quick Fix is Fujairah''s go-to plumbing service for homes and businesses. We respond within 60 minutes to all emergency calls. Our experienced team handles everything from simple tap repairs to full bathroom renovations at honest, upfront prices.',
   'Fujairah',
   'Fujairah City',
   'Plumbing',
@@ -257,7 +257,7 @@ Pressure Testing',
 (
   'HealthFirst Medical Center',
   'healthfirst-medical-center',
-  'HealthFirst Medical Center is a fully licensed, DHA-approved clinic in Business Bay offering comprehensive healthcare services. Our team of qualified doctors covers general medicine, pediatrics and women\'s health. We accept all major insurance plans.',
+  'HealthFirst Medical Center is a fully licensed, DHA-approved clinic in Business Bay offering comprehensive healthcare services. Our team of qualified doctors covers general medicine, pediatrics and women''s health. We accept all major insurance plans.',
   'Dubai',
   'Business Bay',
   'Medical Clinic',
@@ -381,7 +381,7 @@ Business Lunch Sets',
 (
   'Handyman Hub Dubai',
   'handyman-hub-dubai',
-  'Handyman Hub is Dubai\'s most trusted home maintenance service. We handle all types of repairs and installations quickly and professionally. Our app-based booking system means you can have a qualified handyman at your door within 2 hours.',
+  'Handyman Hub is Dubai''s most trusted home maintenance service. We handle all types of repairs and installations quickly and professionally. Our app-based booking system means you can have a qualified handyman at your door within 2 hours.',
   'Dubai',
   'Mirdif',
   'Home Maintenance',
@@ -443,7 +443,7 @@ Garden Maintenance',
 (
   'Bright Minds Tutoring Dubai',
   'bright-minds-tutoring-dubai',
-  'Bright Minds is Dubai\'s leading private tutoring service. Our qualified teachers provide personalized one-on-one and small group sessions for students from Grade 1 to Grade 12. We cover all curricula including British, American, IB and UAE national.',
+  'Bright Minds is Dubai''s leading private tutoring service. Our qualified teachers provide personalized one-on-one and small group sessions for students from Grade 1 to Grade 12. We cover all curricula including British, American, IB and UAE national.',
   'Dubai',
   'DIFC',
   'Tutoring',
@@ -519,7 +519,7 @@ SELECT id, 'Fatima Hassan', 5, 'Amazing food! The butter chicken is the best I h
 FROM businesses WHERE slug = 'zafran-indian-kitchen-dubai';
 
 INSERT INTO reviews (business_id, reviewer_name, rating, comment)
-SELECT id, 'Rania Al Maktoum', 5, 'My son\'s grades improved so much after joining Bright Minds. Wonderful teachers!'
+SELECT id, 'Rania Al Maktoum', 5, 'My son''s grades improved so much after joining Bright Minds. Wonderful teachers!'
 FROM businesses WHERE slug = 'bright-minds-tutoring-dubai';
 
 INSERT INTO reviews (business_id, reviewer_name, rating, comment)
