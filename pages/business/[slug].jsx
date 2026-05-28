@@ -68,18 +68,16 @@ export default function BusinessPage() {
   }
 
   const tierConfig = {
-    sponsored: { label: '⭐ Sponsored', color: '#0D9488', bg: 'rgba(13,148,136,0.1)' },
-    premium: { label: '🥇 Premium', color: '#d97706', bg: 'rgba(217,119,6,0.1)' },
+    sponsored: { label: 'Sponsored', color: '#0D9488', bg: 'rgba(13,148,136,0.1)' },
+    premium: { label: 'Premium', color: '#d97706', bg: 'rgba(217,119,6,0.1)' },
     standard: { label: 'Standard', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
   }
 
-  // Loading State
   if (loading) {
     return (
       <>
         <Navbar />
         <div className="min-h-screen bg-gray-50">
-          {/* Cover skeleton */}
           <div className="w-full h-56 sm:h-72 bg-gray-200 animate-pulse" />
           <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-12 pb-20">
             <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 animate-pulse">
@@ -103,7 +101,6 @@ export default function BusinessPage() {
     )
   }
 
-  // Not Found State
   if (notFound || !business) {
     return (
       <>
@@ -114,10 +111,7 @@ export default function BusinessPage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
           <div className="text-center max-w-md">
             <div className="text-6xl mb-5">🔍</div>
-            <h1
-              className="text-2xl font-bold mb-3"
-              style={{ color: '#0F172A' }}
-            >
+            <h1 className="text-2xl font-bold mb-3" style={{ color: '#0F172A' }}>
               Business Not Found
             </h1>
             <p className="text-gray-400 mb-8">
@@ -150,30 +144,25 @@ export default function BusinessPage() {
         <title>{business.name} — Daleel UAE</title>
         <meta
           name="description"
-          content={business.description?.slice(0, 155) || `${business.name} listed on Daleel UAE`}
+          content={business.description ? business.description.slice(0, 155) : business.name + ' listed on Daleel UAE'}
         />
       </Head>
 
       <Navbar />
 
       <main>
-        {/* ── COVER PHOTO ──────────────────────────────────────── */}
+        {/* COVER PHOTO */}
         <div className="relative w-full h-52 sm:h-72 overflow-hidden">
           {business.cover_url ? (
             <img
               src={business.cover_url}
-              alt={`${business.name} cover`}
+              alt={business.name + ' cover'}
               className="w-full h-full object-cover"
             />
           ) : (
-            <div
-              className="w-full h-full cover-placeholder"
-            />
+            <div className="w-full h-full cover-placeholder" />
           )}
-          {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30" />
-
-          {/* Back button */}
           <div className="absolute top-4 left-4">
             <button
               onClick={() => router.back()}
@@ -186,23 +175,21 @@ export default function BusinessPage() {
           </div>
         </div>
 
-        {/* ── MAIN CONTENT ─────────────────────────────────────── */}
-        <div
-          className="relative"
-          style={{ backgroundColor: '#f8fafc' }}
-        >
+        {/* MAIN CONTENT */}
+        <div className="relative" style={{ backgroundColor: '#f8fafc' }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
 
-            {/* ── BUSINESS HEADER CARD ─────────────────────────── */}
+            {/* BUSINESS HEADER CARD */}
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8 -mt-10 relative z-10 mb-6">
               <div className="flex flex-col sm:flex-row items-start gap-5">
+
                 {/* Logo */}
                 <div className="flex-shrink-0 -mt-16 sm:-mt-20">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-lg overflow-hidden bg-white">
                     {business.logo_url ? (
                       <img
                         src={business.logo_url}
-                        alt={`${business.name} logo`}
+                        alt={business.name + ' logo'}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -216,7 +203,7 @@ export default function BusinessPage() {
                   </div>
                 </div>
 
-                {/* Business Info */}
+                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h1
@@ -225,7 +212,6 @@ export default function BusinessPage() {
                     >
                       {business.name}
                     </h1>
-                    {/* Tier Badge */}
                     <span
                       className="px-3 py-1 rounded-full text-xs font-bold"
                       style={{ backgroundColor: tier.bg, color: tier.color }}
@@ -234,7 +220,6 @@ export default function BusinessPage() {
                     </span>
                   </div>
 
-                  {/* Category */}
                   {business.category && (
                     <span
                       className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white mb-3"
@@ -244,15 +229,14 @@ export default function BusinessPage() {
                     </span>
                   )}
 
-                  {/* Meta Tags */}
                   <div className="flex flex-wrap gap-3 text-sm text-gray-500">
                     {(business.area || business.emirate) && (
                       <Link
-                        href={`/emirate/${emirateSlug}`}
+                        href={'/emirate/' + emirateSlug}
                         className="flex items-center gap-1 hover:text-teal-600 transition-colors"
                       >
                         <HiLocationMarker className="w-4 h-4" style={{ color: '#0D9488' }} />
-                        {business.area && `${business.area}, `}{business.emirate}
+                        {business.area && business.area + ', '}{business.emirate}
                       </Link>
                     )}
                     {business.year_established && (
@@ -274,7 +258,7 @@ export default function BusinessPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-              {/* ── LEFT COLUMN ────────────────────────────────── */}
+              {/* LEFT COLUMN */}
               <div className="lg:col-span-2 space-y-6">
 
                 {/* Description */}
@@ -345,7 +329,7 @@ export default function BusinessPage() {
                   </div>
                 )}
 
-                {/* Reviews Section */}
+                {/* Reviews */}
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                   <div className="flex items-center justify-between mb-5">
                     <h2
@@ -359,12 +343,10 @@ export default function BusinessPage() {
                     </span>
                   </div>
 
-                  {/* Rating Summary */}
                   <div className="mb-6 pb-6 border-b border-gray-100">
                     <RatingSummary reviews={reviews} />
                   </div>
 
-                  {/* Individual Reviews */}
                   {reviews.length > 0 ? (
                     <div className="space-y-4 mb-6">
                       {reviews.map((review) => (
@@ -408,7 +390,6 @@ export default function BusinessPage() {
                     </div>
                   )}
 
-                  {/* Review Form */}
                   <ReviewForm
                     businessId={business.id}
                     onReviewSubmitted={handleReviewSubmitted}
@@ -416,7 +397,7 @@ export default function BusinessPage() {
                 </div>
               </div>
 
-              {/* ── RIGHT COLUMN ───────────────────────────────── */}
+              {/* RIGHT COLUMN */}
               <div className="space-y-6">
 
                 {/* Contact Buttons */}
@@ -430,7 +411,7 @@ export default function BusinessPage() {
                   <div className="space-y-3">
                     {business.mobile && (
                       
-                        href={`tel:${business.mobile}`}
+                        href={'tel:' + business.mobile}
                         className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
                         style={{ backgroundColor: '#0D9488' }}
                       >
@@ -440,7 +421,7 @@ export default function BusinessPage() {
                     )}
                     {business.whatsapp && (
                       
-                        href={`https://wa.me/${business.whatsapp}`}
+                        href={'https://wa.me/' + business.whatsapp}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
@@ -452,7 +433,7 @@ export default function BusinessPage() {
                     )}
                     {business.email && (
                       
-                        href={`mailto:${business.email}`}
+                        href={'mailto:' + business.email}
                         className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
                         style={{ backgroundColor: '#0F172A' }}
                       >
@@ -482,10 +463,7 @@ export default function BusinessPage() {
                         </div>
                         <div>
                           <div className="text-xs text-gray-400">Category</div>
-                          <div
-                            className="text-sm font-medium"
-                            style={{ color: '#0F172A' }}
-                          >
+                          <div className="text-sm font-medium" style={{ color: '#0F172A' }}>
                             {business.category}
                           </div>
                         </div>
@@ -501,11 +479,8 @@ export default function BusinessPage() {
                         </div>
                         <div>
                           <div className="text-xs text-gray-400">Location</div>
-                          <div
-                            className="text-sm font-medium"
-                            style={{ color: '#0F172A' }}
-                          >
-                            {business.area && `${business.area}, `}{business.emirate}
+                          <div className="text-sm font-medium" style={{ color: '#0F172A' }}>
+                            {business.area && business.area + ', '}{business.emirate}
                           </div>
                         </div>
                       </div>
@@ -520,10 +495,7 @@ export default function BusinessPage() {
                         </div>
                         <div>
                           <div className="text-xs text-gray-400">Established</div>
-                          <div
-                            className="text-sm font-medium"
-                            style={{ color: '#0F172A' }}
-                          >
+                          <div className="text-sm font-medium" style={{ color: '#0F172A' }}>
                             {business.year_established}
                           </div>
                         </div>
@@ -539,10 +511,7 @@ export default function BusinessPage() {
                         </div>
                         <div>
                           <div className="text-xs text-gray-400">Trade License</div>
-                          <div
-                            className="text-sm font-medium"
-                            style={{ color: '#0F172A' }}
-                          >
+                          <div className="text-sm font-medium" style={{ color: '#0F172A' }}>
                             {business.tl_number}
                           </div>
                         </div>
@@ -551,7 +520,7 @@ export default function BusinessPage() {
                   </div>
                 </div>
 
-                {/* List Your Business CTA */}
+                {/* CTA */}
                 <div
                   className="rounded-2xl p-5 text-center"
                   style={{ backgroundColor: '#0F172A' }}
