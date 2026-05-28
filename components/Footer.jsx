@@ -22,7 +22,6 @@ export default function Footer() {
 
   return (
     <footer style={{ backgroundColor: '#0F172A' }} className="text-white">
-      {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
@@ -42,7 +41,6 @@ export default function Footer() {
             <p className="text-gray-400 text-sm leading-relaxed mt-3">
               UAE&apos;s most trusted directory connecting customers with verified local businesses across all 7 emirates.
             </p>
-            {/* Social Icons */}
             <div className="flex items-center gap-4 mt-6">
               
                 href="https://instagram.com/daleeluae"
@@ -157,8 +155,6 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-
-            {/* Register CTA */}
             <div className="mt-8">
               <Link
                 href="/register"
