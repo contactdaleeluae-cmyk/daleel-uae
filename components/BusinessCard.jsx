@@ -28,13 +28,10 @@ export default function BusinessCard({ business }) {
 
   return (
     <div className={cardClass}>
-      {/* Tier Badge Bar */}
       {(isSponsored || isPremium) && (
         <div
           className="px-4 py-1.5 flex items-center gap-2"
-          style={{
-            backgroundColor: isSponsored ? '#0D9488' : '#d97706',
-          }}
+          style={{ backgroundColor: isSponsored ? '#0D9488' : '#d97706' }}
         >
           <span className="text-white text-xs font-bold uppercase tracking-wider">
             {isSponsored ? '⭐ Sponsored' : '🥇 Premium'}
@@ -43,14 +40,13 @@ export default function BusinessCard({ business }) {
       )}
 
       <div className="p-5">
-        {/* Top Row — Logo + Name + Badges */}
+        {/* Top Row */}
         <div className="flex items-start gap-4 mb-4">
-          {/* Logo */}
           <div className="flex-shrink-0">
             {logo_url ? (
               <img
                 src={logo_url}
-                alt={`${name} logo`}
+                alt={name + ' logo'}
                 className="w-14 h-14 rounded-xl object-cover border border-gray-100 shadow-sm"
               />
             ) : (
@@ -63,16 +59,15 @@ export default function BusinessCard({ business }) {
             )}
           </div>
 
-          {/* Name + Meta */}
           <div className="flex-1 min-w-0">
-            <Link href={`/business/${slug}`}>
-              <h3 className="font-bold text-base leading-tight hover:text-teal-600 transition-colors cursor-pointer truncate"
-                style={{ color: '#0F172A' }}>
+            <Link href={'/business/' + slug}>
+              <h3
+                className="font-bold text-base leading-tight hover:text-teal-600 transition-colors cursor-pointer truncate"
+                style={{ color: '#0F172A' }}
+              >
                 {name}
               </h3>
             </Link>
-
-            {/* Category Badge */}
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {category && (
                 <span
@@ -93,7 +88,7 @@ export default function BusinessCard({ business }) {
           </div>
         </div>
 
-        {/* Key Services Pills */}
+        {/* Key Services */}
         {key_services && key_services.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-4">
             {key_services.slice(0, 3).map((service, index) => (
@@ -112,14 +107,13 @@ export default function BusinessCard({ business }) {
           </div>
         )}
 
-        {/* Divider */}
         <div className="border-t border-gray-100 my-3" />
 
         {/* Contact Buttons */}
         <div className="flex items-center gap-2">
           {mobile && (
             
-              href={`tel:${mobile}`}
+              href={'tel:' + mobile}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95"
               style={{ backgroundColor: '#0D9488' }}
               title="Call"
@@ -130,7 +124,7 @@ export default function BusinessCard({ business }) {
           )}
           {whatsapp && (
             
-              href={`https://wa.me/${whatsapp}`}
+              href={'https://wa.me/' + whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95"
@@ -143,7 +137,7 @@ export default function BusinessCard({ business }) {
           )}
           {email && (
             
-              href={`mailto:${email}`}
+              href={'mailto:' + email}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95"
               style={{ backgroundColor: '#0F172A' }}
               title="Email"
@@ -154,9 +148,9 @@ export default function BusinessCard({ business }) {
           )}
         </div>
 
-        {/* View Profile Link */}
+        {/* View Profile */}
         <Link
-          href={`/business/${slug}`}
+          href={'/business/' + slug}
           className="mt-3 block text-center text-xs font-medium transition-colors hover:underline"
           style={{ color: '#0D9488' }}
         >
