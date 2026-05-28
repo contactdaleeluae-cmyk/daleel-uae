@@ -34,6 +34,8 @@ export default function Payment() {
   const tierInfo = tierDetails[tier] || tierDetails.standard
   const businessName = name ? decodeURIComponent(name) : 'Your Business'
 
+  const whatsappMessage = 'Hi, I just registered my business ' + businessName + ' on Daleel UAE (' + tierInfo.name + ' plan - ' + tierInfo.price + '). Here is my payment confirmation.'
+
   return (
     <>
       <Head>
@@ -47,7 +49,7 @@ export default function Payment() {
       <Navbar />
 
       <main>
-        {/* ── HERO ─────────────────────────────────────────────── */}
+        {/* HERO */}
         <section
           className="relative py-16 sm:py-20 overflow-hidden"
           style={{ backgroundColor: '#0F172A' }}
@@ -58,7 +60,6 @@ export default function Payment() {
             style={{ backgroundColor: '#0D9488' }}
           />
           <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
-            {/* Success Icon */}
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
               style={{ backgroundColor: 'rgba(13,148,136,0.2)' }}
@@ -74,7 +75,7 @@ export default function Payment() {
           </div>
         </section>
 
-        {/* ── PAYMENT SECTION ──────────────────────────────────── */}
+        {/* PAYMENT SECTION */}
         <section className="py-16 sm:py-20 bg-gray-50">
           <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
@@ -86,7 +87,6 @@ export default function Payment() {
               >
                 Registration Summary
               </h2>
-
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-gray-50">
                   <span className="text-sm text-gray-500">Business Name</span>
@@ -199,7 +199,7 @@ export default function Payment() {
                     color: '#0D9488',
                   }}
                 >
-                  ⚠️ Please use your business name as the payment reference so we can identify your transfer quickly.
+                  Please use your business name as the payment reference so we can identify your transfer quickly.
                 </div>
               </div>
 
@@ -238,7 +238,7 @@ export default function Payment() {
                   Complete your bank transfer first, then send us a screenshot of the transfer confirmation on WhatsApp. We will activate your listing within 2 hours.
                 </p>
                 
-                  href={`https://wa.me/971500000000?text=Hi, I just registered my business "${businessName}" on Daleel UAE (${tierInfo.name} plan - ${tierInfo.price}). Here is my payment confirmation.`}
+                  href={'https://wa.me/971500000000?text=' + encodeURIComponent(whatsappMessage)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
@@ -250,7 +250,7 @@ export default function Payment() {
               </div>
             </div>
 
-            {/* Activation Timeline */}
+            {/* What Happens Next */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
               <h2
                 className="text-lg font-bold mb-5"
@@ -258,25 +258,21 @@ export default function Payment() {
               >
                 What Happens Next?
               </h2>
-
               <div className="space-y-4">
                 {[
                   {
-                    step: '1',
                     title: 'Complete Payment',
                     desc: 'Transfer the amount and send us the confirmation',
                     icon: <FaUniversity className="w-4 h-4" />,
                     color: '#0F172A',
                   },
                   {
-                    step: '2',
                     title: 'We Verify Payment',
                     desc: 'Our team confirms your payment within 2 hours',
                     icon: <HiCheckCircle className="w-4 h-4" />,
                     color: '#0D9488',
                   },
                   {
-                    step: '3',
                     title: 'Listing Goes Live',
                     desc: 'Your business appears on Daleel UAE immediately',
                     icon: <HiArrowRight className="w-4 h-4" />,
@@ -319,7 +315,7 @@ export default function Payment() {
                 style={{ color: '#0D9488' }}
               />
               <p className="text-sm leading-relaxed" style={{ color: '#0F172A' }}>
-                <strong>Your listing will be activated within 2 hours</strong> of payment confirmation during business hours (9am–9pm UAE time). Payments received after hours will be activated the next morning.
+                <strong>Your listing will be activated within 2 hours</strong> of payment confirmation during business hours (9am to 9pm UAE time). Payments received after hours will be activated the next morning.
               </p>
             </div>
 
@@ -330,7 +326,7 @@ export default function Payment() {
                 className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:underline"
                 style={{ color: '#0D9488' }}
               >
-                ← Back to Daleel UAE Homepage
+                Back to Daleel UAE Homepage
               </Link>
             </div>
           </div>
