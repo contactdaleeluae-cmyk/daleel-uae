@@ -40,7 +40,6 @@ export default function BusinessCard({ business }) {
       )}
 
       <div className="p-5">
-        {/* Top Row */}
         <div className="flex items-start gap-4 mb-4">
           <div className="flex-shrink-0">
             {logo_url ? (
@@ -88,7 +87,6 @@ export default function BusinessCard({ business }) {
           </div>
         </div>
 
-        {/* Key Services */}
         {key_services && key_services.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-4">
             {key_services.slice(0, 3).map((service, index) => (
@@ -109,7 +107,6 @@ export default function BusinessCard({ business }) {
 
         <div className="border-t border-gray-100 my-3" />
 
-        {/* Contact Buttons */}
         <div className="flex items-center gap-2">
           {mobile && (
             
@@ -148,7 +145,6 @@ export default function BusinessCard({ business }) {
           )}
         </div>
 
-        {/* View Profile */}
         <Link
           href={'/business/' + slug}
           className="mt-3 block text-center text-xs font-medium transition-colors hover:underline"
