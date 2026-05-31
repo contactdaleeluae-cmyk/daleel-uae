@@ -92,7 +92,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://wa.me/971500000000" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-400 text-sm hover:text-teal-400 transition-colors duration-200">
+                <a href="https://wa.me/971569811722" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-400 text-sm hover:text-teal-400 transition-colors duration-200">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(13,148,136,0.15)' }}>
                     <FaWhatsapp className="w-4 h-4" style={{ color: '#0D9488' }} />
                   </div>
