@@ -32,7 +32,7 @@ export default function Payment() {
   const tierInfo = tierDetails[tier] || tierDetails.standard
   const businessName = name ? decodeURIComponent(name) : 'Your Business'
   const whatsappMessage = 'Hi, I just registered my business ' + businessName + ' on Daleel UAE (' + tierInfo.name + ' plan - ' + tierInfo.price + '). Here is my payment confirmation.'
-  const whatsappUrl = 'https://wa.me/971500000000?text=' + encodeURIComponent(whatsappMessage)
+  const whatsappUrl = 'https://wa.me/971569811722?text=' + encodeURIComponent(whatsappMessage)
 
   return (
     <>
