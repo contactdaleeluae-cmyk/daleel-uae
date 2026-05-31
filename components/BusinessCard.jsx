@@ -2,6 +2,19 @@ import Link from 'next/link'
 import { FaPhone, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
 import { HiLocationMarker, HiTag } from 'react-icons/hi'
 
+function ContactButton({ href, style, title, children }) {
+  return (
+    <Link
+      href={href}
+      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95"
+      style={style}
+      title={title}
+    >
+      {children}
+    </Link>
+  )
+}
+
 export default function BusinessCard({ business }) {
   const {
     slug,
@@ -109,39 +122,34 @@ export default function BusinessCard({ business }) {
 
         <div className="flex items-center gap-2">
           {mobile && (
-            
+            <ContactButton
               href={'tel:' + mobile}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95"
               style={{ backgroundColor: '#0D9488' }}
               title="Call"
             >
               <FaPhone className="w-3 h-3" />
               Call
-            </a>
+            </ContactButton>
           )}
           {whatsapp && (
-            
+            <ContactButton
               href={'https://wa.me/' + whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95"
               style={{ backgroundColor: '#25D366' }}
               title="WhatsApp"
             >
               <FaWhatsapp className="w-3 h-3" />
               WhatsApp
-            </a>
+            </ContactButton>
           )}
           {email && (
-            
+            <ContactButton
               href={'mailto:' + email}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95"
               style={{ backgroundColor: '#0F172A' }}
               title="Email"
             >
               <FaEnvelope className="w-3 h-3" />
               Email
-            </a>
+            </ContactButton>
           )}
         </div>
 
