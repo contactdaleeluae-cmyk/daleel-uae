@@ -92,7 +92,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <div className="text-xs font-semibold uppercase tracking-wider mb-0.5" style={{ color: '#25D366' }}>WhatsApp</div>
-                      <a href="https://wa.me/971500000000" target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:underline" style={{ color: '#0F172A' }}>
+                      <a href="https://wa.me/971569811722" target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:underline" style={{ color: '#0F172A' }}>
                         Message us on WhatsApp
                       </a>
                     </div>
