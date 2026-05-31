@@ -1,12 +1,34 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
 import { HiCheckCircle, HiXCircle, HiTrash, HiEye, HiLockClosed, HiLogout, HiRefresh } from 'react-icons/hi'
 import { FaWhatsapp, FaPhone, FaEnvelope, FaStar } from 'react-icons/fa'
 
 const ADMIN_PASSWORD = 'Anaconda!!#10kaedjune2026'
-
 const TABS = ['Pending', 'Active', 'Reviews', 'Contacts', 'Stats']
+
+function PreviewLink({ slug, label, className, style }) {
+  return (
+    <Link
+      href={'/business/' + slug}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      style={style}
+    >
+      {label}
+    </Link>
+  )
+}
+
+function EmailLink({ email, className }) {
+  return (
+    <Link href={'mailto:' + email} className={className}>
+      {email}
+    </Link>
+  )
+}
 
 export default function AdminDashboard() {
   const [authed, setAuthed] = useState(false)
@@ -58,21 +80,17 @@ export default function AdminDashboard() {
         .from('businesses')
         .select('*')
         .order('created_at', { ascending: false })
-
       const { data: allReviews } = await supabase
         .from('reviews')
         .select('*')
         .order('created_at', { ascending: false })
-
       const { data: allContacts } = await supabase
         .from('contacts')
         .select('*')
         .order('created_at', { ascending: false })
-
       setBusinesses(allBusinesses || [])
       setReviews(allReviews || [])
       setContacts(allContacts || [])
-
       const all = allBusinesses || []
       setStats({
         total: all.length,
@@ -95,10 +113,8 @@ export default function AdminDashboard() {
     try {
       await supabase.from('businesses').update({ active: true }).eq('id', id)
       setBusinesses(prev => prev.map(b => b.id === id ? { ...b, active: true } : b))
-      showNotification('✅ Business approved and is now live!')
-    } catch (err) {
-      console.error(err)
-    }
+      showNotification('Business approved and is now live!')
+    } catch (err) { console.error(err) }
   }
 
   const rejectBusiness = async (id) => {
@@ -106,20 +122,16 @@ export default function AdminDashboard() {
     try {
       await supabase.from('businesses').delete().eq('id', id)
       setBusinesses(prev => prev.filter(b => b.id !== id))
-      showNotification('🗑️ Business deleted.')
-    } catch (err) {
-      console.error(err)
-    }
+      showNotification('Business deleted.')
+    } catch (err) { console.error(err) }
   }
 
   const deactivateBusiness = async (id) => {
     try {
       await supabase.from('businesses').update({ active: false }).eq('id', id)
       setBusinesses(prev => prev.map(b => b.id === id ? { ...b, active: false } : b))
-      showNotification('⏸️ Business deactivated.')
-    } catch (err) {
-      console.error(err)
-    }
+      showNotification('Business deactivated.')
+    } catch (err) { console.error(err) }
   }
 
   const deleteReview = async (id) => {
@@ -127,20 +139,16 @@ export default function AdminDashboard() {
     try {
       await supabase.from('reviews').delete().eq('id', id)
       setReviews(prev => prev.filter(r => r.id !== id))
-      showNotification('🗑️ Review deleted.')
-    } catch (err) {
-      console.error(err)
-    }
+      showNotification('Review deleted.')
+    } catch (err) { console.error(err) }
   }
 
   const deleteContact = async (id) => {
     try {
       await supabase.from('contacts').delete().eq('id', id)
       setContacts(prev => prev.filter(c => c.id !== id))
-      showNotification('🗑️ Contact deleted.')
-    } catch (err) {
-      console.error(err)
-    }
+      showNotification('Contact deleted.')
+    } catch (err) { console.error(err) }
   }
 
   const pendingBusinesses = businesses.filter(b => !b.active)
@@ -152,7 +160,6 @@ export default function AdminDashboard() {
     standard: '#64748b',
   }
 
-  // LOGIN SCREEN
   if (!authed) {
     return (
       <>
@@ -202,7 +209,6 @@ export default function AdminDashboard() {
     )
   }
 
-  // ADMIN DASHBOARD
   return (
     <>
       <Head>
@@ -212,14 +218,12 @@ export default function AdminDashboard() {
 
       <div className="min-h-screen" style={{ backgroundColor: '#f8fafc' }}>
 
-        {/* Notification Toast */}
         {notification && (
           <div className="fixed top-4 right-4 z-50 bg-white rounded-2xl shadow-xl px-5 py-3 border border-gray-100">
             <p className="text-sm font-semibold" style={{ color: '#0F172A' }}>{notification}</p>
           </div>
         )}
 
-        {/* Header */}
         <div className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
@@ -256,7 +260,6 @@ export default function AdminDashboard() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-          {/* Stats Row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-8">
             {[
               { label: 'Total', value: stats.total || 0, color: '#0F172A' },
@@ -275,7 +278,6 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* Tabs */}
           <div className="flex gap-2 mb-6 overflow-x-auto hide-scrollbar">
             {TABS.map((tab) => (
               <button
@@ -297,7 +299,6 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* Loading */}
           {loading && (
             <div className="text-center py-20">
               <div className="animate-spin w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full mx-auto mb-3" />
@@ -305,7 +306,6 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* PENDING TAB */}
           {!loading && activeTab === 'Pending' && (
             <div>
               <h2 className="text-lg font-bold mb-4" style={{ color: '#0F172A' }}>
@@ -340,7 +340,7 @@ export default function AdminDashboard() {
                           <div className="flex flex-wrap gap-3 text-xs text-gray-500 mb-3">
                             <span>📍 {b.area}, {b.emirate}</span>
                             <span>🏷️ {b.category}</span>
-                            <span>📅 Registered {new Date(b.created_at).toLocaleDateString('en-AE')}</span>
+                            <span>📅 {new Date(b.created_at).toLocaleDateString('en-AE')}</span>
                           </div>
                           {b.description && (
                             <p className="text-sm text-gray-500 mb-3 line-clamp-2">{b.description}</p>
@@ -375,19 +375,17 @@ export default function AdminDashboard() {
                               <HiXCircle className="w-4 h-4" />
                               Reject
                             </button>
-                            
-                              <Link
-                            href={'/business/' + b.slug}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90 border"
-                            style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
-                            >
-                            <HiEye className="w-4 h-4" />
-                            Preview
-                            </Link>
-                            
-                            </a>
+                            <PreviewLink
+                              slug={b.slug}
+                              label={
+                                <span className="flex items-center gap-2">
+                                  <HiEye className="w-4 h-4" />
+                                  Preview
+                                </span>
+                              }
+                              className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90 border"
+                              style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
+                            />
                           </div>
                         </div>
                       </div>
@@ -398,7 +396,6 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* ACTIVE TAB */}
           {!loading && activeTab === 'Active' && (
             <div>
               <h2 className="text-lg font-bold mb-4" style={{ color: '#0F172A' }}>
@@ -432,18 +429,17 @@ export default function AdminDashboard() {
                           <p className="text-xs text-gray-400 mt-0.5">{b.area}, {b.emirate} — {b.category}</p>
                         </div>
                         <div className="flex gap-2 flex-shrink-0">
-                          
-                          <Link
-                          href={'/business/' + b.slug}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all hover:bg-gray-50"
-                          style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
-                          >
-                          <HiEye className="w-3.5 h-3.5" />
-                          View
-                          </Link>
-                          </a>
+                          <PreviewLink
+                            slug={b.slug}
+                            label={
+                              <span className="flex items-center gap-1.5">
+                                <HiEye className="w-3.5 h-3.5" />
+                                View
+                              </span>
+                            }
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all hover:bg-gray-50"
+                            style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
+                          />
                           <button
                             onClick={() => deactivateBusiness(b.id)}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-all hover:opacity-90"
@@ -469,7 +465,6 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* REVIEWS TAB */}
           {!loading && activeTab === 'Reviews' && (
             <div>
               <h2 className="text-lg font-bold mb-4" style={{ color: '#0F172A' }}>
@@ -512,7 +507,6 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* CONTACTS TAB */}
           {!loading && activeTab === 'Contacts' && (
             <div>
               <h2 className="text-lg font-bold mb-4" style={{ color: '#0F172A' }}>
@@ -530,7 +524,7 @@ export default function AdminDashboard() {
                         <div className="flex-1">
                           <div className="flex flex-wrap items-center gap-3 mb-2">
                             <span className="font-semibold text-sm" style={{ color: '#0F172A' }}>{c.name}</span>
-<Link href={'mailto:' + c.email} className="text-xs text-teal-600 hover:underline">{c.email}</Link>                            
+                            <EmailLink email={c.email} className="text-xs text-teal-600 hover:underline" />
                             <span className="text-xs text-gray-400">{new Date(c.created_at).toLocaleDateString('en-AE')}</span>
                           </div>
                           <p className="text-sm text-gray-500">{c.message}</p>
@@ -551,7 +545,6 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* STATS TAB */}
           {!loading && activeTab === 'Stats' && (
             <div>
               <h2 className="text-lg font-bold mb-4" style={{ color: '#0F172A' }}>Overview</h2>
