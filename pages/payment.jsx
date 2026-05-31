@@ -12,12 +12,27 @@ const tierDetails = {
   sponsored: { name: 'Sponsored', price: 'AED 3,000', period: 'per month', color: '#d97706' },
 }
 
+function WhatsAppButton({ href, children }) {
+  return (
+    <Link
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
+      style={{ backgroundColor: '#25D366' }}
+    >
+      {children}
+    </Link>
+  )
+}
+
 export default function Payment() {
   const router = useRouter()
   const { tier, name } = router.query
   const tierInfo = tierDetails[tier] || tierDetails.standard
   const businessName = name ? decodeURIComponent(name) : 'Your Business'
   const whatsappMessage = 'Hi, I just registered my business ' + businessName + ' on Daleel UAE (' + tierInfo.name + ' plan - ' + tierInfo.price + '). Here is my payment confirmation.'
+  const whatsappUrl = 'https://wa.me/971500000000?text=' + encodeURIComponent(whatsappMessage)
 
   return (
     <>
@@ -34,7 +49,9 @@ export default function Payment() {
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5" style={{ backgroundColor: 'rgba(13,148,136,0.2)' }}>
               <HiCheckCircle className="w-8 h-8" style={{ color: '#0D9488' }} />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 leading-tight">Registration Received!</h1>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 leading-tight">
+              Registration Received!
+            </h1>
             <p className="text-gray-300 text-lg">Complete your payment below to activate your listing</p>
           </div>
         </section>
@@ -116,16 +133,10 @@ export default function Payment() {
                 <p className="text-sm text-gray-500 mb-4">
                   Complete your bank transfer first, then send us a screenshot of the transfer confirmation on WhatsApp. We will activate your listing within 2 hours.
                 </p>
-                
-                  href={'https://wa.me/971500000000?text=' + encodeURIComponent(whatsappMessage)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
-                  style={{ backgroundColor: '#25D366' }}
-                >
+                <WhatsAppButton href={whatsappUrl}>
                   <FaWhatsapp className="w-4 h-4" />
                   Send Payment Confirmation on WhatsApp
-                </a>
+                </WhatsAppButton>
               </div>
             </div>
 
