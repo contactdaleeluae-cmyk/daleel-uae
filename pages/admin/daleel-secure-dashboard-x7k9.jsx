@@ -376,14 +376,17 @@ export default function AdminDashboard() {
                               Reject
                             </button>
                             
-                              href={'/business/' + b.slug}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90 border"
-                              style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
+                              <Link
+                            href={'/business/' + b.slug}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90 border"
+                            style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
                             >
-                              <HiEye className="w-4 h-4" />
-                              Preview
+                            <HiEye className="w-4 h-4" />
+                            Preview
+                            </Link>
+                            
                             </a>
                           </div>
                         </div>
@@ -430,14 +433,16 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex gap-2 flex-shrink-0">
                           
-                            href={'/business/' + b.slug}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all hover:bg-gray-50"
-                            style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
+                          <Link
+                          href={'/business/' + b.slug}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all hover:bg-gray-50"
+                          style={{ color: '#0F172A', borderColor: '#e5e7eb' }}
                           >
-                            <HiEye className="w-3.5 h-3.5" />
-                            View
+                          <HiEye className="w-3.5 h-3.5" />
+                          View
+                          </Link>
                           </a>
                           <button
                             onClick={() => deactivateBusiness(b.id)}
@@ -525,7 +530,7 @@ export default function AdminDashboard() {
                         <div className="flex-1">
                           <div className="flex flex-wrap items-center gap-3 mb-2">
                             <span className="font-semibold text-sm" style={{ color: '#0F172A' }}>{c.name}</span>
-                            <a href={'mailto:' + c.email} className="text-xs text-teal-600 hover:underline">{c.email}</a>
+<Link href={'mailto:' + c.email} className="text-xs text-teal-600 hover:underline">{c.email}</Link>                            
                             <span className="text-xs text-gray-400">{new Date(c.created_at).toLocaleDateString('en-AE')}</span>
                           </div>
                           <p className="text-sm text-gray-500">{c.message}</p>
