@@ -340,7 +340,7 @@ export default function Home() {
 
               <div className="relative z-10">
                 <h3 className="text-2xl sm:text-3xl font-extrabold mb-2">
-                  List Your Business Today for AED 500/year
+                  List Your Business Today for AED 499/year
                 </h3>
                 <p className="text-teal-100 mb-8 max-w-lg mx-auto">
                   Join hundreds of UAE businesses already getting new customers through Daleel UAE
