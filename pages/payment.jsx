@@ -1,38 +1,174 @@
+import { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import { HiCheckCircle, HiClock, HiArrowRight } from 'react-icons/hi'
-import { FaWhatsapp, FaUniversity } from 'react-icons/fa'
+import { HiCheckCircle, HiClock, HiArrowRight, HiShieldCheck } from 'react-icons/hi'
+import { FaWhatsapp, FaCreditCard, FaLock } from 'react-icons/fa'
 
 const tierDetails = {
-  standard: { name: 'Standard', price: 'AED 500', period: 'per year', color: '#64748b' },
-  premium: { name: 'Premium', price: 'AED 1,500', period: 'per year', color: '#0D9488' },
-  sponsored: { name: 'Sponsored', price: 'AED 3,000', period: 'per month', color: '#d97706' },
-}
-
-function WhatsAppButton({ href, children }) {
-  return (
-    <Link
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
-      style={{ backgroundColor: '#25D366' }}
-    >
-      {children}
-    </Link>
-  )
+  standard: { name: 'Standard', price: 'AED 499', amount: 49900, period: 'per year', color: '#64748b' },
+  premium: { name: 'Premium', price: 'AED 999', amount: 99900, period: 'per year', color: '#0D9488' },
+  sponsored: { name: 'Sponsored', price: 'AED 1,499', amount: 149900, period: 'per month', color: '#d97706' },
 }
 
 export default function Payment() {
   const router = useRouter()
-  const { tier, name } = router.query
+  const { business, tier, name } = router.query
   const tierInfo = tierDetails[tier] || tierDetails.standard
   const businessName = name ? decodeURIComponent(name) : 'Your Business'
-  const whatsappMessage = 'Hi, I just registered my business ' + businessName + ' on Daleel UAE (' + tierInfo.name + ' plan - ' + tierInfo.price + '). Here is my payment confirmation.'
-  const whatsappUrl = 'https://wa.me/971569811722?text=' + encodeURIComponent(whatsappMessage)
+  const [loading, setLoading] = useState(false)
+  const [paid, setPaid] = useState(false)
+  const [error, setError] = useState('')
+
+  const handlePayment = async () => {
+    setError('')
+    setLoading(true)
+
+    try {
+      // Step 1 — Create order on server
+      const orderRes = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: tier || 'standard',
+          businessName,
+          businessId: business,
+        }),
+      })
+
+      const orderData = await orderRes.json()
+
+      if (!orderRes.ok) {
+        throw new Error(orderData.error || 'Failed to create order')
+      }
+
+      // Step 2 — Open Razorpay popup
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'Daleel UAE',
+        description: tierInfo.name + ' Listing — ' + businessName,
+        order_id: orderData.orderId,
+        handler: async function (response) {
+          // Step 3 — Verify payment on server
+          try {
+            const verifyRes = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                businessId: business,
+              }),
+            })
+
+            const verifyData = await verifyRes.json()
+
+            if (verifyData.success) {
+              setPaid(true)
+              setLoading(false)
+            } else {
+              setError('Payment verification failed. Please contact us.')
+              setLoading(false)
+            }
+          } catch (err) {
+            setError('Something went wrong. Please contact us on WhatsApp.')
+            setLoading(false)
+          }
+        },
+        prefill: {
+          name: businessName,
+        },
+        theme: {
+          color: '#0D9488',
+        },
+        modal: {
+          ondismiss: function () {
+            setLoading(false)
+          },
+        },
+      }
+
+      // Load Razorpay script dynamically
+      const script = document.createElement('script')
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.onload = () => {
+        const rzp = new window.Razorpay(options)
+        rzp.open()
+      }
+      document.body.appendChild(script)
+
+    } catch (err) {
+      console.error(err)
+      setError(err.message || 'Something went wrong. Please try again.')
+      setLoading(false)
+    }
+  }
+
+  const whatsappMessage = 'Hi, I just registered my business ' + businessName + ' on Daleel UAE (' + tierInfo.name + ' plan - ' + tierInfo.price + '). I need help with payment.'
+  const whatsappUrl = 'https://wa.me/971500000000?text=' + encodeURIComponent(whatsappMessage)
+
+  // Success Screen
+  if (paid) {
+    return (
+      <>
+        <Head>
+          <title>Payment Successful — Daleel UAE</title>
+        </Head>
+        <Navbar />
+        <main>
+          <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-20">
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-10 max-w-md w-full text-center">
+              <div
+                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+                style={{ backgroundColor: 'rgba(13,148,136,0.1)' }}
+              >
+                <HiCheckCircle className="w-10 h-10" style={{ color: '#0D9488' }} />
+              </div>
+              <h1 className="text-2xl font-extrabold mb-2" style={{ color: '#0F172A' }}>
+                Payment Successful!
+              </h1>
+              <p className="text-gray-500 mb-2">
+                Your payment has been confirmed and your listing is now live on Daleel UAE!
+              </p>
+              <p className="text-sm text-gray-400 mb-8">
+                Your business is now visible to thousands of UAE customers.
+              </p>
+              <div
+                className="rounded-2xl p-4 mb-8 text-left"
+                style={{ backgroundColor: 'rgba(13,148,136,0.05)', border: '1px solid rgba(13,148,136,0.2)' }}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-gray-500">Business</span>
+                  <span className="text-sm font-semibold" style={{ color: '#0F172A' }}>{businessName}</span>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-gray-500">Plan</span>
+                  <span className="text-sm font-bold text-white px-3 py-0.5 rounded-full capitalize" style={{ backgroundColor: tierInfo.color }}>{tierInfo.name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Amount Paid</span>
+                  <span className="text-sm font-bold" style={{ color: tierInfo.color }}>{tierInfo.price}</span>
+                </div>
+              </div>
+              <Link
+                href="/"
+                className="block w-full py-3.5 rounded-xl font-bold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: '#0D9488' }}
+              >
+                Go to Daleel UAE Homepage
+              </Link>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    )
+  }
 
   return (
     <>
@@ -42,6 +178,8 @@ export default function Payment() {
       </Head>
       <Navbar />
       <main>
+
+        {/* HERO */}
         <section className="relative py-16 sm:py-20 overflow-hidden" style={{ backgroundColor: '#0F172A' }}>
           <div className="absolute inset-0 hero-overlay opacity-30" />
           <div className="absolute top-0 right-1/3 w-80 h-80 rounded-full opacity-10 blur-3xl" style={{ backgroundColor: '#0D9488' }} />
@@ -59,6 +197,7 @@ export default function Payment() {
         <section className="py-16 sm:py-20 bg-gray-50">
           <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
+            {/* Registration Summary */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
               <h2 className="text-lg font-bold mb-5" style={{ color: '#0F172A' }}>Registration Summary</h2>
               <div className="space-y-3">
@@ -81,72 +220,72 @@ export default function Payment() {
               </div>
             </div>
 
+            {/* Payment Button */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
-              <h2 className="text-lg font-bold mb-2" style={{ color: '#0F172A' }}>How to Complete Payment</h2>
-              <p className="text-gray-500 text-sm mb-6">Choose your preferred payment method below</p>
+              <h2 className="text-lg font-bold mb-2" style={{ color: '#0F172A' }}>Complete Payment</h2>
+              <p className="text-gray-500 text-sm mb-6">
+                Secure payment powered by Razorpay. Pay by card, UPI, or net banking.
+              </p>
 
-              <div className="rounded-2xl p-6 mb-4 border" style={{ backgroundColor: 'rgba(15,23,42,0.02)', borderColor: '#e5e7eb' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#0F172A' }}>
-                    <FaUniversity className="w-4 h-4 text-white" />
+              {/* Security badges */}
+              <div className="flex flex-wrap gap-3 mb-6">
+                {[
+                  { icon: <FaLock className="w-3 h-3" />, label: '256-bit SSL Encrypted' },
+                  { icon: <HiShieldCheck className="w-3 h-3" />, label: 'Razorpay Secured' },
+                  { icon: <FaCreditCard className="w-3 h-3" />, label: 'All Cards Accepted' },
+                ].map((badge, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{ backgroundColor: 'rgba(13,148,136,0.08)', color: '#0D9488' }}
+                  >
+                    {badge.icon}
+                    {badge.label}
                   </div>
-                  <div>
-                    <div className="font-bold text-sm" style={{ color: '#0F172A' }}>Bank Transfer</div>
-                    <div className="text-xs text-gray-400">Transfer directly to our account</div>
-                  </div>
-                </div>
-                <div className="space-y-2.5">
-                  {[
-                    { label: 'Bank Name', value: 'Emirates NBD' },
-                    { label: 'Account Name', value: 'Daleel UAE FZ LLC' },
-                    { label: 'Account Number', value: 'XXXX-XXXX-XXXX' },
-                    { label: 'IBAN', value: 'AE00 0000 0000 0000 0000 000' },
-                    { label: 'Reference', value: businessName },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                      <span className="text-xs text-gray-400">{item.label}</span>
-                      <span className="text-xs font-semibold" style={{ color: '#0F172A' }}>{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 rounded-xl p-3 text-xs" style={{ backgroundColor: 'rgba(13,148,136,0.05)', color: '#0D9488' }}>
-                  Please use your business name as the payment reference so we can identify your transfer quickly.
-                </div>
+                ))}
               </div>
 
-              <div className="flex items-center gap-3 my-4">
-                <div className="flex-1 h-px bg-gray-100" />
-                <span className="text-xs text-gray-400 font-medium">OR</span>
-                <div className="flex-1 h-px bg-gray-100" />
-              </div>
-
-              <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'rgba(37,211,102,0.04)', borderColor: 'rgba(37,211,102,0.2)' }}>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#25D366' }}>
-                    <FaWhatsapp className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-sm" style={{ color: '#0F172A' }}>Pay via WhatsApp</div>
-                    <div className="text-xs text-gray-400">Send us your payment confirmation</div>
-                  </div>
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4">
+                  <p className="text-red-600 text-sm">{error}</p>
                 </div>
-                <p className="text-sm text-gray-500 mb-4">
-                  Complete your bank transfer first, then send us a screenshot of the transfer confirmation on WhatsApp. We will activate your listing within 2 hours.
-                </p>
-                <WhatsAppButton href={whatsappUrl}>
-                  <FaWhatsapp className="w-4 h-4" />
-                  Send Payment Confirmation on WhatsApp
-                </WhatsAppButton>
-              </div>
+              )}
+
+              <button
+                onClick={handlePayment}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-white text-base transition-all hover:opacity-90 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ backgroundColor: '#0D9488' }}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <FaCreditCard className="w-5 h-5" />
+                    Pay {tierInfo.price} Securely
+                  </>
+                )}
+              </button>
+
+              <p className="text-center text-xs text-gray-400 mt-3">
+                Your payment is processed securely by Razorpay. We never see your card details.
+              </p>
             </div>
 
+            {/* What Happens Next */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
               <h2 className="text-lg font-bold mb-5" style={{ color: '#0F172A' }}>What Happens Next?</h2>
               <div className="space-y-4">
                 {[
-                  { title: 'Complete Payment', desc: 'Transfer the amount and send us the confirmation', icon: <FaUniversity className="w-4 h-4" />, color: '#0F172A' },
-                  { title: 'We Verify Payment', desc: 'Our team confirms your payment within 2 hours', icon: <HiCheckCircle className="w-4 h-4" />, color: '#0D9488' },
-                  { title: 'Listing Goes Live', desc: 'Your business appears on Daleel UAE immediately', icon: <HiArrowRight className="w-4 h-4" />, color: '#16a34a' },
+                  { title: 'Payment Confirmed', desc: 'Razorpay confirms your payment instantly', icon: <FaCreditCard className="w-4 h-4" />, color: '#0F172A' },
+                  { title: 'Listing Activated', desc: 'Your business goes live on Daleel UAE automatically', icon: <HiCheckCircle className="w-4 h-4" />, color: '#0D9488' },
+                  { title: 'Customers Find You', desc: 'UAE customers searching your category find your business', icon: <HiArrowRight className="w-4 h-4" />, color: '#16a34a' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: item.color }}>
@@ -161,11 +300,30 @@ export default function Payment() {
               </div>
             </div>
 
-            <div className="rounded-2xl p-5 flex items-start gap-3 mb-8" style={{ backgroundColor: 'rgba(13,148,136,0.06)', border: '1.5px solid rgba(13,148,136,0.2)' }}>
+            {/* Activation Note */}
+            <div className="rounded-2xl p-5 flex items-start gap-3 mb-6" style={{ backgroundColor: 'rgba(13,148,136,0.06)', border: '1.5px solid rgba(13,148,136,0.2)' }}>
               <HiClock className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#0D9488' }} />
               <p className="text-sm leading-relaxed" style={{ color: '#0F172A' }}>
-                <strong>Your listing will be activated within 2 hours</strong> of payment confirmation during business hours (9am to 9pm UAE time). Payments received after hours will be activated the next morning.
+                <strong>Your listing activates instantly</strong> after payment confirmation. No waiting, no manual approval needed.
               </p>
+            </div>
+
+            {/* Need Help */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 mb-6">
+              <h3 className="text-sm font-bold mb-3" style={{ color: '#0F172A' }}>Need Help With Payment?</h3>
+              <p className="text-xs text-gray-400 mb-4">
+                If you have any issues with the payment process contact us on WhatsApp and we will help you immediately.
+              </p>
+              <Link
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: '#25D366' }}
+              >
+                <FaWhatsapp className="w-4 h-4" />
+                Get Help on WhatsApp
+              </Link>
             </div>
 
             <div className="text-center">
