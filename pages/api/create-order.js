@@ -1,45 +1,43 @@
-import Razorpay from 'razorpay'
-
-const TIER_AMOUNTS = {
-  standard: 49900,
-  premium: 99900,
-  sponsored: 149900,
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  // Check environment variables
-  if (!process.env.RAZORPAY_KEY_ID) {
-    console.error('Missing RAZORPAY_KEY_ID')
-    return res.status(500).json({ error: 'Razorpay Key ID not configured' })
-  }
+  const keyId = process.env.RAZORPAY_KEY_ID
+  const keySecret = process.env.RAZORPAY_KEY_SECRET
 
-  if (!process.env.RAZORPAY_KEY_SECRET) {
-    console.error('Missing RAZORPAY_KEY_SECRET')
-    return res.status(500).json({ error: 'Razorpay Key Secret not configured' })
+  if (!keyId || !keySecret) {
+    return res.status(500).json({ error: 'Missing Razorpay credentials' })
   }
 
   try {
+    const Razorpay = require('razorpay')
+
     const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
+      key_id: keyId,
+      key_secret: keySecret,
     })
 
     const { tier, businessName, businessId } = req.body
+
+    const TIER_AMOUNTS = {
+      standard: 49900,
+      premium: 99900,
+      sponsored: 149900,
+    }
 
     if (!tier || !TIER_AMOUNTS[tier]) {
       return res.status(400).json({ error: 'Invalid tier: ' + tier })
     }
 
-    const amount = TIER_AMOUNTS[tier]
+    // Keep receipt under 40 characters
+    const shortId = businessId ? businessId.substring(0, 8) : 'new'
+    const receipt = 'dleel_' + shortId + '_' + Date.now().toString().slice(-6)
 
     const order = await razorpay.orders.create({
-      amount,
+      amount: TIER_AMOUNTS[tier],
       currency: 'INR',
-      receipt: 'daleel_' + (businessId || 'test') + '_' + Date.now(),
+      receipt: receipt,
       notes: {
         businessName: businessName || 'Unknown',
         businessId: businessId || '',
@@ -52,13 +50,13 @@ export default async function handler(req, res) {
       orderId: order.id,
       amount: order.amount,
       currency: order.currency,
-      keyId: process.env.RAZORPAY_KEY_ID,
+      keyId: keyId,
     })
 
   } catch (error) {
-    console.error('Razorpay error:', error)
+    console.error('Razorpay error:', JSON.stringify(error, null, 2))
     return res.status(500).json({
-      error: 'Razorpay error: ' + (error.message || 'Unknown error'),
+      error: error.message || 'Unknown error',
       details: error.error || null,
     })
   }
