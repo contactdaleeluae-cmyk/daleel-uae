@@ -110,34 +110,34 @@ export default function AdminDashboard() {
   }
 
   const approveBusiness = async (id) => {
-  try {
-    await supabase.from('businesses').update({ active: true }).eq('id', id)
-    setBusinesses(prev => prev.map(b => b.id === id ? { ...b, active: true } : b))
-    showNotification('Business approved and is now live!')
+    try {
+      await supabase.from('businesses').update({ active: true }).eq('id', id)
+      setBusinesses(prev => prev.map(b => b.id === id ? { ...b, active: true } : b))
+      showNotification('Business approved and is now live!')
 
-    // Send approval email
-    const approvedBusiness = businesses.find(b => b.id === id)
-    if (approvedBusiness && approvedBusiness.email) {
-      try {
-        await fetch('/api/send-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'listing_approved',
-            business: {
-              name: approvedBusiness.name,
-              email: approvedBusiness.email,
-              slug: approvedBusiness.slug,
-              tier: approvedBusiness.tier,
-            },
-          }),
-        })
-      } catch (emailErr) {
-        console.error('Approval email failed:', emailErr)
+      // Send approval email
+      const approvedBusiness = businesses.find(b => b.id === id)
+      if (approvedBusiness && approvedBusiness.email) {
+        try {
+          await fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'listing_approved',
+              business: {
+                name: approvedBusiness.name,
+                email: approvedBusiness.email,
+                slug: approvedBusiness.slug,
+                tier: approvedBusiness.tier,
+              },
+            }),
+          })
+        } catch (emailErr) {
+          console.error('Approval email failed:', emailErr)
+        }
       }
-    }
-  } catch (err) { console.error(err) }
-}
+    } catch (err) { console.error(err) }
+  }
 
   const rejectBusiness = async (id) => {
     if (!confirm('Are you sure you want to delete this business? This cannot be undone.')) return
@@ -387,7 +387,7 @@ export default function AdminDashboard() {
                               style={{ backgroundColor: '#16a34a' }}
                             >
                               <HiCheckCircle className="w-4 h-4" />
-                              Approve
+                              Approve + Email
                             </button>
                             <button
                               onClick={() => rejectBusiness(b.id)}
