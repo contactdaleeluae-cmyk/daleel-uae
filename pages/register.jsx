@@ -187,12 +187,37 @@ export default function Register() {
         tier: selectedTier,
         active: false,
       }
+
       const { data, error: insertError } = await supabase
         .from('businesses')
         .insert([businessData])
         .select()
       if (insertError) throw insertError
       const registeredBusiness = data[0]
+
+      // Send email notifications
+      try {
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'new_registration',
+            business: {
+              name: form.name.trim(),
+              tier: selectedTier,
+              category: form.category,
+              area: form.area,
+              emirate: form.emirate,
+              mobile: form.mobile.trim(),
+              whatsapp: form.whatsapp.trim() || form.mobile.trim(),
+              email: form.email.trim(),
+            },
+          }),
+        })
+      } catch (emailErr) {
+        console.error('Email failed:', emailErr)
+      }
+
       router.push('/payment?business=' + registeredBusiness.id + '&tier=' + selectedTier + '&name=' + encodeURIComponent(form.name))
     } catch (err) {
       console.error(err)
@@ -340,13 +365,11 @@ export default function Register() {
             </div>
             <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-6">
 
-              {/* Business Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Business Name <span className="text-red-500">*</span></label>
                 <input name="name" type="text" value={form.name} onChange={handleChange} placeholder="e.g. Al Noor AC Services" className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm transition-all" style={{ color: '#0F172A' }} />
               </div>
 
-              {/* Emirate + Area */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Emirate <span className="text-red-500">*</span></label>
@@ -364,7 +387,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Category */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Category <span className="text-red-500">*</span></label>
                 <select name="category" value={form.category} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm transition-all" style={{ color: '#0F172A' }}>
@@ -373,13 +395,11 @@ export default function Register() {
                 </select>
               </div>
 
-              {/* Description */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Business Description <span className="text-red-500">*</span></label>
                 <textarea name="description" value={form.description} onChange={handleChange} placeholder="Describe your business, what you offer, and what makes you stand out..." rows={4} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm resize-none transition-all" style={{ color: '#0F172A' }} />
               </div>
 
-              {/* Key Services */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Key Services <span className="text-red-500">*</span></label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -390,13 +410,11 @@ export default function Register() {
                 <p className="text-xs text-gray-400 mt-1.5">e.g. AC Installation, AC Repair, Duct Cleaning</p>
               </div>
 
-              {/* Additional Services */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Additional Services <span className="text-gray-400 font-normal">(optional)</span></label>
                 <textarea name="additional_services" value={form.additional_services} onChange={handleChange} placeholder="List any other services you offer..." rows={3} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm resize-none transition-all" style={{ color: '#0F172A' }} />
               </div>
 
-              {/* Year + TL */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Year Established <span className="text-gray-400 font-normal">(optional)</span></label>
@@ -408,7 +426,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Contact Details */}
               <div className="border-t border-gray-100 pt-6">
                 <h3 className="text-base font-bold mb-4" style={{ color: '#0F172A' }}>Contact Details</h3>
                 <div className="space-y-4">
@@ -429,7 +446,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Image Uploads */}
               <div className="border-t border-gray-100 pt-6">
                 <h3 className="text-base font-bold mb-4" style={{ color: '#0F172A' }}>Business Images</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -466,7 +482,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Selected Tier */}
               <div className="border-t border-gray-100 pt-6">
                 <h3 className="text-base font-bold mb-4" style={{ color: '#0F172A' }}>Selected Plan</h3>
                 <div className="rounded-2xl p-4 flex items-center justify-between" style={{ backgroundColor: 'rgba(13,148,136,0.05)', border: '2px solid rgba(13,148,136,0.2)' }}>
@@ -488,14 +503,12 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Error */}
               {error && (
                 <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                   <p className="text-red-600 text-sm font-medium">{error}</p>
                 </div>
               )}
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
