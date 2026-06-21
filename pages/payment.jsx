@@ -249,7 +249,7 @@ export default function Payment() {
               <div id="paypal-button-container" className="mb-4" />
 
               {/* Show Pay with PayPal button if not loaded yet */}
-              {!window?.paypal && !loading && (
+              {typeof window !== 'undefined' && !window?.paypal && !loading && (
                 <button
                   onClick={handlePayPalClick}
                   className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-white text-base transition-all hover:opacity-90"
