@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -20,55 +20,42 @@ export default function Payment() {
   const businessName = name ? decodeURIComponent(name) : 'Your Business'
   const [paid, setPaid] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [paypalReady, setPaypalReady] = useState(false)
   const [error, setError] = useState('')
+  const [isBrowser, setIsBrowser] = useState(false)
 
   const whatsappMessage = 'Hi, I just registered my business ' + businessName + ' on Daleel UAE (' + tierInfo.name + ' plan - ' + tierInfo.price + '). I would like to complete my payment.'
   const whatsappUrl = 'https://wa.me/971500000000?text=' + encodeURIComponent(whatsappMessage)
 
-  const handlePayPalClick = async () => {
-    setError('')
-    setLoading(true)
+  useEffect(() => {
+    setIsBrowser(true)
+  }, [])
 
-    try {
-      const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
+  useEffect(() => {
+    if (!isBrowser) return
+    if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) return
 
-      if (!clientId) {
-        setError('PayPal is not configured. Please use WhatsApp payment below.')
-        setLoading(false)
-        return
-      }
-
-      // Check if PayPal SDK already loaded
-      if (window.paypal) {
-        renderPayPalButtons()
-        setLoading(false)
-        return
-      }
-
-      // Load PayPal SDK
-      const script = document.createElement('script')
-      script.src = 'https://www.paypal.com/sdk/js?client-id=' + clientId + '&currency=USD&intent=capture'
-      script.async = true
-      script.onload = () => {
-        setLoading(false)
-        renderPayPalButtons()
-      }
-      script.onerror = () => {
-        setError('Failed to load PayPal. Please use WhatsApp payment below.')
-        setLoading(false)
-      }
-      document.body.appendChild(script)
-    } catch (err) {
-      console.error(err)
-      setError('Something went wrong. Please use WhatsApp payment below.')
-      setLoading(false)
+    const existingScript = document.getElementById('paypal-sdk')
+    if (existingScript) {
+      setPaypalReady(true)
+      return
     }
-  }
 
-  const renderPayPalButtons = () => {
+    const script = document.createElement('script')
+    script.id = 'paypal-sdk'
+    script.src = 'https://www.paypal.com/sdk/js?client-id=' + process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID + '&currency=USD&intent=capture'
+    script.async = true
+    script.onload = () => setPaypalReady(true)
+    script.onerror = () => setError('Failed to load PayPal. Please use WhatsApp payment below.')
+    document.body.appendChild(script)
+  }, [isBrowser])
+
+  useEffect(() => {
+    if (!paypalReady || paid || !isBrowser) return
+    if (!window.paypal) return
+
     const container = document.getElementById('paypal-button-container')
     if (!container) return
-    if (!window.paypal) return
     container.innerHTML = ''
 
     window.paypal.Buttons({
@@ -98,7 +85,6 @@ export default function Payment() {
         setLoading(true)
         try {
           const order = await actions.order.capture()
-          console.log('Payment completed:', order)
           if (order.status === 'COMPLETED') {
             if (business) {
               try {
@@ -125,8 +111,8 @@ export default function Payment() {
         }
       },
       onError: function(err) {
-        console.error('PayPal button error:', err)
-        setError('PayPal error: ' + (err.message || 'Unknown error. Please try WhatsApp payment below.'))
+        console.error('PayPal error:', err)
+        setError('PayPal error. Please try WhatsApp payment below.')
         setLoading(false)
       },
       onCancel: function() {
@@ -136,11 +122,9 @@ export default function Payment() {
     }).render('#paypal-button-container').catch(function(err) {
       console.error('Render error:', err)
       setError('Could not load PayPal buttons. Please use WhatsApp payment below.')
-      setLoading(false)
     })
-  }
+  }, [paypalReady, paid, isBrowser, tierInfo, businessName, business])
 
-  // Success Screen
   if (paid) {
     return (
       <>
@@ -188,7 +172,6 @@ export default function Payment() {
       </Head>
       <Navbar />
       <main>
-
         <section className="relative py-16 sm:py-20 overflow-hidden" style={{ backgroundColor: '#0F172A' }}>
           <div className="absolute inset-0 hero-overlay opacity-30" />
           <div className="absolute top-0 right-1/3 w-80 h-80 rounded-full opacity-10 blur-3xl" style={{ backgroundColor: '#0D9488' }} />
@@ -204,7 +187,6 @@ export default function Payment() {
         <section className="py-16 sm:py-20 bg-gray-50">
           <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
-            {/* Summary */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
               <h2 className="text-lg font-bold mb-5" style={{ color: '#0F172A' }}>Registration Summary</h2>
               <div className="space-y-3">
@@ -234,7 +216,6 @@ export default function Payment() {
               </div>
             </div>
 
-            {/* PayPal Section */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
               <h2 className="text-lg font-bold mb-2" style={{ color: '#0F172A' }}>Complete Payment</h2>
               <p className="text-gray-500 text-sm mb-6">Pay securely with PayPal. Use your PayPal account or any debit or credit card.</p>
@@ -245,25 +226,22 @@ export default function Payment() {
                 </div>
               )}
 
-              {/* PayPal Button Container */}
-              <div id="paypal-button-container" className="mb-4" />
-
-              {/* Show Pay with PayPal button if not loaded yet */}
-              {typeof window !== 'undefined' && !window?.paypal && !loading && (
-                <button
-                  onClick={handlePayPalClick}
-                  className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-white text-base transition-all hover:opacity-90"
-                  style={{ backgroundColor: '#0070ba' }}
-                >
-                  <FaPaypal className="w-5 h-5" />
-                  Pay with PayPal
-                </button>
-              )}
-
               {loading && (
                 <div className="text-center py-4">
                   <div className="animate-spin w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-2" />
-                  <p className="text-gray-400 text-sm">Loading PayPal...</p>
+                  <p className="text-gray-400 text-sm">Processing your payment...</p>
+                </div>
+              )}
+
+              {!loading && (
+                <div>
+                  {!paypalReady && isBrowser && (
+                    <div className="text-center py-4">
+                      <div className="animate-spin w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-2" />
+                      <p className="text-gray-400 text-sm">Loading PayPal...</p>
+                    </div>
+                  )}
+                  <div id="paypal-button-container" className="min-h-[50px]" />
                 </div>
               )}
 
@@ -272,14 +250,12 @@ export default function Payment() {
               </p>
             </div>
 
-            {/* Divider */}
             <div className="flex items-center gap-3 my-4">
               <div className="flex-1 h-px bg-gray-200" />
               <span className="text-xs text-gray-400 font-medium">OR</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
-            {/* WhatsApp Alternative */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 mb-6">
               <h3 className="text-sm font-bold mb-2" style={{ color: '#0F172A' }}>Prefer to Pay via WhatsApp?</h3>
               <p className="text-xs text-gray-400 mb-4">Contact us on WhatsApp and we will send you bank transfer details directly.</p>
@@ -295,7 +271,6 @@ export default function Payment() {
               </Link>
             </div>
 
-            {/* Activation Note */}
             <div className="rounded-2xl p-5 flex items-start gap-3 mb-6" style={{ backgroundColor: 'rgba(13,148,136,0.06)', border: '1.5px solid rgba(13,148,136,0.2)' }}>
               <HiClock className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#0D9488' }} />
               <p className="text-sm leading-relaxed" style={{ color: '#0F172A' }}>
