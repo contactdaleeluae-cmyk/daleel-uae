@@ -220,8 +220,8 @@ export default function Register() {
 
       router.push('/payment?business=' + registeredBusiness.id + '&tier=' + selectedTier + '&name=' + encodeURIComponent(form.name))
     } catch (err) {
-      console.error('Full error:', err)
-      setError('Error: ' + (err.message || JSON.stringify(err)))
+      console.error(err)
+      setError('Something went wrong. Please try again or contact us.')
     } finally {
       setLoading(false)
     }
